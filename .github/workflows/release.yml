@@ -8,7 +8,37 @@ permissions:
   contents: write
 
 jobs:
-  release:
+  changelog:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      body: ${{ steps.extract.outputs.body }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract changelog for tag
+        id: extract
+        run: |
+          # Strip leading "v" to match "## v1.2.3" headers
+          version="${GITHUB_REF_NAME#v}"
+          # Extract the section between this version's header and the next "## " header (or EOF)
+          body=$(awk -v ver="$version" '
+            BEGIN { found=0 }
+            /^## / {
+              if (found) exit
+              if (index($0, ver)) { found=1; next }
+            }
+            found { print }
+          ' CHANGELOG.md)
+          # Write to output using heredoc delimiter
+          {
+            echo "body<<CHANGELOG_EOF"
+            echo "$body"
+            echo "CHANGELOG_EOF"
+          } >> "$GITHUB_OUTPUT"
+
+  build:
+    needs: changelog
     runs-on: ubuntu-latest
     timeout-minutes: 10
     strategy:
@@ -36,6 +66,7 @@ jobs:
       - name: Upload release asset
         uses: softprops/action-gh-release@v2
         with:
+          body: ${{ needs.changelog.outputs.body }}
           files: pappers-mcp-*
 
   notify-proxy:
