@@ -86,16 +86,16 @@ Expose everything except surveillance tools:
 
 ## Tools
 
-| Category | Tools | Source |
-|----------|-------|--------|
-| **Company** | Company data (SIREN/SIRET/name), association data | [1], [2] |
-| **Search** | Companies, directors, beneficial owners, documents, BODACC publications | [3] |
-| **Suggestions** | Company name autocomplete | [4] |
-| **Financials** | Annual accounts, corporate map | [5], [6] |
-| **Compliance** | PEP/sanctions screening | [7] |
-| **Documents** | Pappers extract, INPI extract, INSEE notice, bylaws, UBO declaration, financial/non-financial reports, document download | [8] |
-| **Surveillance** | Company/director watch lists, notifications | [9] |
-| **Account** | API credit usage | [10] |
+| Category | Tools |
+|----------|-------|
+| **Company** | Company data (SIREN/SIRET/name), association data [1] [2] |
+| **Search** | Companies, directors, beneficial owners, documents, BODACC publications [3] |
+| **Suggestions** | Company name autocomplete [4] |
+| **Financials** | Annual accounts, corporate map [5] [6] |
+| **Compliance** | PEP/sanctions screening [7] |
+| **Documents** | Pappers extract, INPI extract, INSEE notice, bylaws, UBO declaration, financial/non-financial reports, document download [8] |
+| **Surveillance** | Company/director watch lists, notifications [9] |
+| **Account** | API credit usage [10] |
 
 24 tools covering the full [Pappers API v2][11].
 
