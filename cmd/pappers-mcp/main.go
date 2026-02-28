@@ -22,7 +22,11 @@ func main() {
 		Version: "2.0.0",
 	}, nil)
 
-	tools.RegisterAll(server, c)
+	filter := tools.NewToolFilter(
+		os.Getenv("PAPPERS_ENABLED_TOOLS"),
+		os.Getenv("PAPPERS_DISABLED_TOOLS"),
+	)
+	tools.RegisterAll(server, c, filter)
 
 	if err := server.Run(context.Background(), &mcp.StdioTransport{}); err != nil {
 		log.Fatal(err)
