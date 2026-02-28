@@ -1,0 +1,48 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        goos: [linux, darwin, windows]
+        goarch: [amd64, arm64]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+
+      - name: Build
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+        run: |
+          ext=""
+          if [ "$GOOS" = "windows" ]; then ext=".exe"; fi
+          go build -o pappers-mcp-${GOOS}-${GOARCH}${ext} ./cmd/pappers-mcp
+
+      - name: Upload release asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: pappers-mcp-*
+
+  notify-proxy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Request Go module proxy to fetch the new version
+        run: |
+          GOPROXY=https://proxy.golang.org \
+          go install github.com/stefanoamorelli/pappers-mcp/cmd/pappers-mcp@${GITHUB_REF_NAME}
