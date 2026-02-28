@@ -49,6 +49,41 @@ Or build from source:
 go build -o pappers-mcp ./cmd/pappers-mcp
 ```
 
+## Configuration
+
+By default all 24 tools are registered. You can restrict which tools are exposed via environment variables:
+
+| Variable | Description |
+|----------|-------------|
+| `PAPPERS_ENABLED_TOOLS` | Comma-separated allowlist. Only these tools are registered. |
+| `PAPPERS_DISABLED_TOOLS` | Comma-separated blocklist. All tools except these are registered. |
+
+If both are set, `PAPPERS_ENABLED_TOOLS` takes precedence. If neither is set, all tools are registered.
+
+**Examples:**
+
+Expose only company lookup and API credits:
+
+```json
+{
+  "env": {
+    "PAPPERS_API_KEY": "your-api-key",
+    "PAPPERS_ENABLED_TOOLS": "get_company_data,get_api_credits"
+  }
+}
+```
+
+Expose everything except surveillance tools:
+
+```json
+{
+  "env": {
+    "PAPPERS_API_KEY": "your-api-key",
+    "PAPPERS_DISABLED_TOOLS": "add_company_watch,add_director_watch,delete_notifications,add_notification_info"
+  }
+}
+```
+
 ## Tools
 
 | Category | Tools | Source |
