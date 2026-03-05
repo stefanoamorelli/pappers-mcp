@@ -7,7 +7,7 @@
   <br />
   <a href="https://modelcontextprotocol.io"><img alt="MCP" src="https://img.shields.io/badge/MCP-compatible-8A2BE2.svg" /></a>
   <a href="https://spec.modelcontextprotocol.io/specification/2025-03-26/"><img alt="MCP Spec" src="https://img.shields.io/badge/MCP_spec-2025--03--26-8A2BE2.svg" /></a>
-  <img alt="Transport: stdio" src="https://img.shields.io/badge/transport-stdio-8A2BE2.svg" />
+  <img alt="Transport: Streamable HTTP" src="https://img.shields.io/badge/transport-Streamable_HTTP-8A2BE2.svg" />
   <img alt="Tools: 24" src="https://img.shields.io/badge/tools-24-8A2BE2.svg" />
   <br />
   <a href="https://www.pappers.fr/api"><img alt="Pappers API v2" src="https://img.shields.io/badge/Pappers_API-v2-orange.svg" /></a>
@@ -20,11 +20,18 @@ MCP server for accessing the [Pappers API v2](https://www.pappers.fr/api). Conne
 
 ## Quick Start
 
+### Start the server
+
+```bash
+PAPPERS_API_KEY=your-key go run github.com/stefanoamorelli/pappers-mcp/cmd/pappers-mcp@latest
+```
+
+The server listens on port `3000` by default. Override with the `PORT` environment variable.
+
 ### Claude Code
 
 ```bash
-claude mcp add --transport stdio -e PAPPERS_API_KEY=your-key pappers-mcp \
-  -- go run github.com/stefanoamorelli/pappers-mcp/cmd/pappers-mcp@latest
+claude mcp add --transport http pappers-mcp http://localhost:3000/mcp
 ```
 
 ### Manual configuration
@@ -33,11 +40,8 @@ claude mcp add --transport stdio -e PAPPERS_API_KEY=your-key pappers-mcp \
 {
   "mcpServers": {
     "pappers-mcp": {
-      "command": "go",
-      "args": ["run", "github.com/stefanoamorelli/pappers-mcp/cmd/pappers-mcp@latest"],
-      "env": {
-        "PAPPERS_API_KEY": "your-api-key"
-      }
+      "type": "http",
+      "url": "http://localhost:3000/mcp"
     }
   }
 }

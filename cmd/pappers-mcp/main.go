@@ -1,8 +1,10 @@
 package main
 
 import (
-	"context"
+	"encoding/json"
 	"log"
+	"net"
+	"net/http"
 	"os"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
@@ -10,16 +12,23 @@ import (
 	"github.com/stefanoamorelli/pappers-mcp/internal/tools"
 )
 
+const version = "0.2.0"
+
 func main() {
 	apiKey := os.Getenv("PAPPERS_API_KEY")
 	if apiKey == "" {
 		log.Fatal("PAPPERS_API_KEY environment variable is required")
 	}
 
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "3000"
+	}
+
 	c := client.New(apiKey)
 	server := mcp.NewServer(&mcp.Implementation{
 		Name:    "pappers-mcp",
-		Version: "0.1.0",
+		Version: version,
 	}, nil)
 
 	filter := tools.NewToolFilter(
@@ -28,7 +37,23 @@ func main() {
 	)
 	tools.RegisterAll(server, c, filter)
 
-	if err := server.Run(context.Background(), &mcp.StdioTransport{}); err != nil {
+	mcpHandler := mcp.NewStreamableHTTPHandler(func(r *http.Request) *mcp.Server {
+		return server
+	}, nil)
+
+	mux := http.NewServeMux()
+	mux.Handle("/mcp", mcpHandler)
+	mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]string{
+			"status":  "ok",
+			"version": version,
+		})
+	})
+
+	addr := net.JoinHostPort("", port)
+	log.Printf("pappers-mcp %s listening on %s", version, addr)
+	if err := http.ListenAndServe(addr, mux); err != nil {
 		log.Fatal(err)
 	}
 }
