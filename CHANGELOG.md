@@ -7,7 +7,7 @@
 - Switch from stdio to streamable HTTP transport
 - Add `/health` endpoint with status and version info
 - Add `/mcp` endpoint for MCP protocol over HTTP
-- Server port configurable via `PORT` environment variable (default `8080`)
+- Server port configurable via `PORT` environment variable (default `3000`)
 - Add tool filtering via `PAPPERS_ENABLED_TOOLS` and `PAPPERS_DISABLED_TOOLS` environment variables
 - Add release workflow for cross-compiled binaries on version tags
 - Add CHANGELOG.md
